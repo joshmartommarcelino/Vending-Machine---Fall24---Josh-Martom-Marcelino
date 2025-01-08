@@ -1,5 +1,8 @@
-# VENDING MACHINE PROGRAM
-# LOADS INVENTORY FROM DICTIONARY
+#VENDING MACHINE PROGRAM
+#IMPORTS TK FOR GUI
+import tkinter as tk
+from tkinter import messagebox
+#LOADS INVENTORY FROM DICTIONARY
 def load_inventory():
     return {
         '001': {"name": 'Lays Tomato Ketchup', "price": 2.90, "stock": 5},
@@ -28,113 +31,88 @@ def load_inventory():
         '024': {"name": 'Milk', "price": 3.20, "stock": 5},
         '025': {"name": 'Boba', "price": 2.80, "stock": 19},
     }
-# GLOBAL INVENTORY
+#GLOBAL INVENTORY
 inventory = load_inventory()
-# DISPLAYS THE INVENTORY
+#DISPLAYS THE INVENTORY
+#FUNCTIONS FOR GUI 
 def display_inventory():
-    print("\nAvailable Items:")
-    print(f"{'ID':<5}{'Name':<25}{'Price':<10}{'Stock':<10}")
-    print("-" * 50)
+    inventory_text.delete(1.0, tk.END)
+    inventory_text.insert(tk.END, f"{'ID':<5}{'Name':<25}{'Price':<10}{'Stock':<10}\n")
+    inventory_text.insert(tk.END, "-" * 50 + "\n")
     for item_id, item_info in inventory.items():
-        print(f"{item_id:<5}{item_info['name']:<25}${item_info['price']:<10}{item_info['stock']:<10}")
-# FETCHES ITEM ID
-def get_item_info(item_id):
-    if item_id in inventory.items():
-        item_info = inventory[item_id]
-        return f'Item: {item_info[0]}, Price: ${item_info[1]}, Stock: {item_info[2]}'
-    else:
-        return 'Item not found.'   
-# UPDATES STOCK
-def update_stock(item_id, quantity):
-    if item_id in load_inventory:
-        item_info = load_inventory[item_id]
-        if item_info[2] >= quantity:
-            item_info[2] -= quantity
-            return f'Successfully updated stock for {item_info[0]}: {item_info[2]}'
-        else:
-            return 'Not enough stock.'
-    else:
-        return 'Item not found.'
-# SUGGEST PRODUCTS BASED ON CATEGORY
-def suggest_items(category):
-    suggestions = [item['name'] for item in inventory.values() if item['category'] == category and item['stock'] > 0]
-    return suggestions
-#PURCHASE PRODUCTS
-def purchase():
-    while True:
-        display_inventory()
-        item_id = input("\nEnter the Item ID to purchase (or 'exit' to quit): ").strip()
-        if item_id.lower() == 'exit':
-            print("Thank you for using the vending machine!")
-            break
+        inventory_text.insert(
+            tk.END, f"{item_id:<5}{item_info['name']:<25}${item_info['price']:<10}{item_info['stock']:<10}\n"
+        )
+#PURCHASES SELECTED ITEMS
+def purchase_item():
+    item_id = item_id_entry.get().strip()
+    quantity = quantity_entry.get().strip()
 
-        if item_id not in inventory:
-            print("Invalid item ID. Please try again.")
-            continue
+    if item_id not in inventory:
+        messagebox.showerror("Error", "Invalid item ID.")
+        return
 
-        item = inventory[item_id]
-        print(f"Selected Item: {item['name']}, Price: ${item['price']}, Stock: {item['stock']}")
+    if not quantity.isdigit() or int(quantity) <= 0:
+        messagebox.showerror("Error", "Quantity must be a positive integer.")
+        return
 
-        try:
-            quantity = int(input("Enter quantity: "))
-            if quantity <= 0:
-                print("Quantity must be greater than zero.")
-                continue
-        except ValueError:
-            print("Invalid quantity. Please enter a number.")
-            continue
+    quantity = int(quantity)
+    item = inventory[item_id]
+    total_cost = item['price'] * quantity
 
-        if item['stock'] < quantity:
-            print("Insufficient stock. Please select a lower quantity.")
-            continue
+    if item['stock'] < quantity:
+        messagebox.showerror("Error", "Insufficient stock.")
+        return
 
-        total_cost = item['price'] * quantity
-        print(f"Total Cost: ${total_cost:.2f}")
+    try:
+        money_inserted = float(money_entry.get().strip())
+        if money_inserted < total_cost:
+            messagebox.showerror("Error", "Insufficient funds.")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Invalid money input.")
+        return
 
-        try:
-            money_inserted = float(input("Please enter the sufficient amount of money: "))
-            if money_inserted < total_cost:
-                print("Insufficient funds. Transaction canceled.")
-                continue
-        except ValueError:
-            print("Invalid amount. Please enter a number.")
-            continue
+    change = money_inserted - total_cost
+    item['stock'] -= quantity
 
-        change = money_inserted - total_cost
-        update_stock(item_id, quantity)
-        print(f"Purchase successful! Your change: ${change:.2f}")
-        print(f"{item['name']} dispensed.")
+    #DISPLAY SUCCESSFUL PURCHASE
+    messagebox.showinfo(
+        "Success",
+        f"Purchase successful!\n\nItem: {item['name']}\nQuantity: {quantity}\nTotal Cost: ${total_cost:.2f}\nYour Change: ${change:.2f}",
+    )
+    display_inventory()
 
-        # Suggest related items
-        suggestions = suggest_items(item['category'])
-        if suggestions:
-            print("\nYou might also like:")
-            for suggestion in suggestions:
-                print(f" - {suggestion}")
+#GUI SETUP
+root = tk.Tk()
+root.title("Vending Machine")
 
-        another_purchase = input("\nWould you like to purchase another item? (yes/no): ").strip().lower()
-        if another_purchase != 'yes':
-            print("Thank you for using the vending machine!")
-            break
-# MAIN FUNCTION
-def main():
-    print("Welcome to the Vending Machine!")
-    while True:
-        print("\nMenu:")
-        print("1. Display Inventory")
-        print("2. Purchase Items")
-        print("3. Exit")
-        choice = input("Enter your choice: ").strip()
+#DISPLAYS INVENTORY
+inventory_label = tk.Label(root, text="Inventory", font=("Arial", 14, "bold"))
+inventory_label.pack()
 
-        if choice == '1':
-            display_inventory()
-        elif choice == '2':
-            purchase()
-        elif choice == '3':
-            print("Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please try again.")
+inventory_text = tk.Text(root, height=15, width=60, state="normal")
+inventory_text.pack()
+display_inventory()
 
-if __name__ == "__main__":
-    main()
+#PURCHASE SECTIONS
+purchase_frame = tk.Frame(root)
+purchase_frame.pack(pady=10)
+
+tk.Label(purchase_frame, text="Item ID: ").grid(row=0, column=0, padx=5, pady=5)
+item_id_entry = tk.Entry(purchase_frame, width=10)
+item_id_entry.grid(row=0, column=1, padx=5, pady=5)
+
+tk.Label(purchase_frame, text="Quantity: ").grid(row=1, column=0, padx=5, pady=5)
+quantity_entry = tk.Entry(purchase_frame, width=10)
+quantity_entry.grid(row=1, column=1, padx=5, pady=5)
+
+tk.Label(purchase_frame, text="Money: ").grid(row=2, column=0, padx=5, pady=5)
+money_entry = tk.Entry(purchase_frame, width=10)
+money_entry.grid(row=2, column=1, padx=5, pady=5)
+
+purchase_button = tk.Button(purchase_frame, text="Purchase", command=purchase_item)
+purchase_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+#RUNNING THE GUI
+root.mainloop()
