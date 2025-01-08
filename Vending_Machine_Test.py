@@ -1,3 +1,4 @@
+#THIS PROTOTYPE WAS GENERATED FROM GEMINI
 class VendingMachine:
     """
     A simple vending machine simulation.
