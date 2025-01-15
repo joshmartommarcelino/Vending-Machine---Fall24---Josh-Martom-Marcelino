@@ -2,38 +2,38 @@
 #IMPORTS TK FOR GUI
 import tkinter as tk
 from tkinter import messagebox
+
 #LOADS INVENTORY FROM DICTIONARY
 def load_inventory():
     return {
-        '001': {"name": 'Lays Tomato Ketchup', "price": 3.50, "stock": 5},
-        '002': {"name": 'Snickers', "price": 3.00, "stock": 3},
-        '003': {"name": 'M&Ms', "price": 2.50, "stock": 8},
-        '004': {"name": 'Pepsi', "price": 2.50, "stock": 10},
-        '005': {"name": 'Sprite', "price": 2.50, "stock": 15},
-        '006': {"name": 'Coke', "price": 2.50, "stock": 20},
-        '007': {"name": 'Vimto', "price": 2.50, "stock": 14},
-        '008': {"name": 'Cheetos', "price": 3.50, "stock": 7},
-        '009': {"name": 'Chips Ahoy', "price": 2.50, "stock": 12},
-        '010': {"name": 'Doritos', "price": 2.50, "stock": 18},
-        '011': {"name": 'Stix', "price": 3.50, "stock": 10},
-        '012': {"name": 'Water', "price": 1.50, "stock": 6},
-        '013': {"name": 'Oman Pofaki Chips', "price": 2.50, "stock": 16},
-        '014': {"name": 'Mars', "price": 3.00, "stock": 11},
-        '015': {"name": 'Skittles', "price": 2.50, "stock": 9},
-        '016': {"name": 'Bounty', "price": 2.50, "stock": 4},
-        '017': {"name": 'Sour Punk', "price": 3.50, "stock": 13},
-        '018': {"name": 'Loacker Wafer Chocolate', "price": 3.50, "stock": 5},
-        '019': {"name": 'Reese Peanut Butter Cups', "price": 2.50, "stock": 19},
-        '020': {"name": 'Gummy Bears', "price": 3.00, "stock": 17},
-        '021': {"name": 'Strawberry Milk', "price": 2.50, "stock": 9},
-        '022': {"name": 'Chocolate Milk', "price": 2.50, "stock": 4},
-        '023': {"name": 'Banana Milk', "price": 3.50, "stock": 13},
-        '024': {"name": 'Milk', "price": 3.50, "stock": 5},
-        '025': {"name": 'Boba', "price": 2.50, "stock": 19},
+        '001': {"name": 'Lays Tomato Ketchup', "price": 3.50, "stock": 5, "category": "Snacks"},
+        '002': {"name": 'Snickers', "price": 3.00, "stock": 3, "category": "Chocolate"},
+        '003': {"name": 'M&Ms', "price": 2.50, "stock": 8, "category": "Chocolate"},
+        '004': {"name": 'Pepsi', "price": 2.50, "stock": 10, "category": "Drinks"},
+        '005': {"name": 'Sprite', "price": 2.50, "stock": 15, "category": "Drinks"},
+        '006': {"name": 'Coke', "price": 2.50, "stock": 20, "category": "Drinks"},
+        '007': {"name": 'Vimto', "price": 2.50, "stock": 14, "category": "Drinks"},
+        '008': {"name": 'Cheetos', "price": 3.50, "stock": 7, "category": "Chips"},
+        '009': {"name": 'Chips Ahoy', "price": 2.50, "stock": 12, "category": "Snacks"},
+        '010': {"name": 'Doritos', "price": 2.50, "stock": 18, "category": "Snacks"},
+        '011': {"name": 'Stix', "price": 3.50, "stock": 10, "category": "Snacks"},
+        '012': {"name": 'Water', "price": 1.50, "stock": 6, "category": "Drinks"},
+        '013': {"name": 'Oman Pofaki Chips', "price": 2.50, "stock": 16, "category": "Snacks"},
+        '014': {"name": 'Mars', "price": 3.00, "stock": 11, "category": "Chocolate"},
+        '015': {"name": 'Skittles', "price": 2.50, "stock": 9, "category": "Chocolate"},
+        '016': {"name": 'Bounty', "price": 2.50, "stock": 4, "category": "Chocolate"},
+        '017': {"name": 'Sour Punk', "price": 3.50, "stock": 13, "category": "Snacks"},
+        '018': {"name": 'Loacker Wafer Chocolate', "price": 3.50, "stock": 5, "category": "Chocolate"},
+        '019': {"name": 'Reese Peanut Butter Cups', "price": 2.50, "stock": 19, "category": "Chocolate"},
+        '020': {"name": 'Gummy Bears', "price": 3.00, "stock": 17, "category": "Snacks"},
+        '021': {"name": 'Strawberry Milk', "price": 2.50, "stock": 9, "category": "Drinks"},
+        '022': {"name": 'Chocolate Milk', "price": 2.50, "stock": 4, "category": "Drinks"},
+        '023': {"name": 'Banana Milk', "price": 3.50, "stock": 13, "category": "Drinks"},
+        '024': {"name": 'Milk', "price": 3.50, "stock": 5, "category": "Drinks"},
+        '025': {"name": 'Boba', "price": 2.50, "stock": 19, "category": "Drinks"},
     }
 #GLOBAL INVENTORY
 inventory = load_inventory()
-#DISPLAYS THE INVENTORY
 #FUNCTIONS FOR GUI 
 def display_inventory():
     inventory_text.delete(1.0, tk.END)
@@ -94,6 +94,27 @@ inventory_label.pack()
 inventory_text = tk.Text(root, height=15, width=60, state="normal")
 inventory_text.pack()
 display_inventory()
+
+#CATEGORIZES THE INVENTORY
+def filter_inventory(category):
+    inventory_text.delete(1.0, tk.END)
+    inventory_text.insert(tk.END, f"{'ID':<5}{'Name':<25}{'Price':<10}{'Stock':<10}\n")
+    inventory_text.insert(tk.END, "-" * 50 + "\n")
+    for item_id, item_info in inventory.items():
+        if item_info["category"] == category or category == "All":
+            inventory_text.insert(
+                tk.END, f"{item_id:<5}{item_info['name']:<25}${item_info['price']:<10}{item_info['stock']:<10}\n"
+            )
+
+category_label = tk.Label(root, text="Filter by Category:")
+category_label.pack()
+
+categories = ["All", "Snacks", "Chocolate", "Drinks"]
+category_var = tk.StringVar(root)
+category_var.set("All")
+
+category_menu = tk.OptionMenu(root, category_var, *categories, command=filter_inventory)
+category_menu.pack()
 
 #PURCHASE SECTIONS
 purchase_frame = tk.Frame(root)
