@@ -82,11 +82,9 @@ def purchase_item():
         f"Purchase successful!\n\nItem: {item['name']}\nQuantity: {quantity}\nTotal Cost: ${total_cost:.2f}\nYour Change: ${change:.2f}",
     )
     display_inventory()
-
 #GUI SETUP
 root = tk.Tk()
 root.title("Vending Machine")
-
 #DISPLAYS INVENTORY
 inventory_label = tk.Label(root, text="Inventory", font=("Arial", 14, "bold"))
 inventory_label.pack()
@@ -94,7 +92,6 @@ inventory_label.pack()
 inventory_text = tk.Text(root, height=15, width=60, state="normal")
 inventory_text.pack()
 display_inventory()
-
 #CATEGORIZES THE INVENTORY
 def filter_inventory(category):
     inventory_text.delete(1.0, tk.END)
@@ -115,7 +112,57 @@ category_var.set("All")
 
 category_menu = tk.OptionMenu(root, category_var, *categories, command=filter_inventory)
 category_menu.pack()
+#CREATES THE CART AND THE CHECKOUT
+cart = []
+def purchase_item():
+    global cart
+    item_id = item_id_entry.get().strip()
+    quantity = quantity_entry.get().strip()
 
+    if item_id not in inventory:
+        messagebox.showerror("Error", "Invalid item ID.")
+        return
+
+    if not quantity.isdigit() or int(quantity) <= 0:
+        messagebox.showerror("Error", "Quantity must be a positive integer.")
+        return
+
+    quantity = int(quantity)
+    item = inventory[item_id]
+
+    if item['stock'] < quantity:
+        messagebox.showerror("Error", "Insufficient stock.")
+        return
+
+    total_cost = item['price'] * quantity
+    cart.append({"name": item['name'], "quantity": quantity, "cost": total_cost})
+    item['stock'] -= quantity
+
+    display_inventory()
+    messagebox.showinfo("Success", f"Added {quantity}x {item['name']} to your cart.")
+def checkout():
+    global cart
+    if not cart:
+        messagebox.showinfo("Checkout", "Your cart is empty!")
+        return
+
+    total_cost = sum(item['cost'] for item in cart)
+    try:
+        money_inserted = float(money_entry.get().strip())
+        if money_inserted < total_cost:
+            messagebox.showerror("Error", "Insufficient funds.")
+            return
+    except ValueError:
+        messagebox.showerror("Error", "Invalid money input.")
+        return
+
+    change = money_inserted - total_cost
+    receipt = "\n".join([f"{item['quantity']}x {item['name']} - ${item['cost']:.2f}" for item in cart])
+    messagebox.showinfo(
+        "Checkout",
+        f"Purchase successful!\n\nItems:\n{receipt}\n\nTotal Cost: ${total_cost:.2f}\nYour Change: ${change:.2f}"
+    )
+    cart = []
 #PURCHASE SECTIONS
 purchase_frame = tk.Frame(root)
 purchase_frame.pack(pady=10)
@@ -135,5 +182,7 @@ money_entry.grid(row=2, column=1, padx=5, pady=5)
 purchase_button = tk.Button(purchase_frame, text="Purchase", command=purchase_item)
 purchase_button.grid(row=3, column=0, columnspan=2, pady=10)
 
+checkout_button = tk.Button(purchase_frame, text="Checkout", command=checkout)
+checkout_button.grid(row=4, column=0, columnspan=2, pady=10)
 #RUNNING THE GUI
 root.mainloop()
