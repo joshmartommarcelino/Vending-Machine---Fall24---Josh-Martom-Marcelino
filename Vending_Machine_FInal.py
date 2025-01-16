@@ -163,6 +163,41 @@ def checkout():
         f"Purchase successful!\n\nItems:\n{receipt}\n\nTotal Cost: ${total_cost:.2f}\nYour Change: ${change:.2f}"
     )
     cart = []
+def suggest_items(category):
+    suggestions = [item['name'] for item in inventory.values() if item['category'] == category and item['stock'] > 0]
+    return suggestions[:3]  # Limits it to 3 items per suggestion
+#SUGGESTS ITEMS BASED ON CATEGORY
+def purchase_item():
+    global cart
+    item_id = item_id_entry.get().strip()
+    quantity = quantity_entry.get().strip()
+
+    if item_id not in inventory:
+        messagebox.showerror("Error", "Invalid item ID.")
+        return
+
+    if not quantity.isdigit() or int(quantity) <= 0:
+        messagebox.showerror("Error", "Quantity must be a positive integer.")
+        return
+
+    quantity = int(quantity)
+    item = inventory[item_id]
+
+    if item['stock'] < quantity:
+        messagebox.showerror("Error", "Insufficient stock.")
+        return
+
+    total_cost = item['price'] * quantity
+    cart.append({"name": item['name'], "quantity": quantity, "cost": total_cost})
+    item['stock'] -= quantity
+
+    display_inventory()
+    suggestions = suggest_items(item['category'])
+    messagebox.showinfo(
+        "Success",
+        f"Added {quantity}x {item['name']} to your cart.\n\nYou might also like:\n" + "\n".join(suggestions)
+    )
+
 #PURCHASE SECTIONS
 purchase_frame = tk.Frame(root)
 purchase_frame.pack(pady=10)
