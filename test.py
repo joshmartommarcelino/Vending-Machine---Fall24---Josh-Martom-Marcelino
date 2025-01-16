@@ -1,9 +1,9 @@
-#VENDING MACHINE PROGRAM
-#IMPORTS TK FOR GUI
+# VENDING MACHINE PROGRAM
 import tkinter as tk
 from tkinter import messagebox
 
-#LOADS INVENTORY FROM DICTIONARY
+
+# LOADS INVENTORY FROM DICTIONARY
 def load_inventory():
     return {
         '001': {"name": 'Lays Tomato Ketchup', "price": 3.50, "stock": 5, "category": "Snacks"},
@@ -32,9 +32,13 @@ def load_inventory():
         '024': {"name": 'Milk', "price": 3.50, "stock": 5, "category": "Drinks"},
         '025': {"name": 'Boba', "price": 2.50, "stock": 19, "category": "Drinks"},
     }
-#GLOBAL INVENTORY
+
+
+# GLOBAL INVENTORY
 inventory = load_inventory()
-#FUNCTIONS FOR GUI 
+
+
+# FUNCTIONS FOR DISPLAYING INVENTORY
 def display_inventory():
     inventory_text.delete(1.0, tk.END)
     inventory_text.insert(tk.END, f"{'ID':<5}{'Name':<25}{'Price':<10}{'Stock':<10}\n")
@@ -43,6 +47,8 @@ def display_inventory():
         inventory_text.insert(
             tk.END, f"{item_id:<5}{item_info['name']:<25}${item_info['price']:<10}{item_info['stock']:<10}\n"
         )
+
+
 # FILTER INVENTORY BY CATEGORY
 def filter_inventory(category):
     inventory_text.delete(1.0, tk.END)
@@ -107,6 +113,7 @@ def checkout():
         "Checkout",
         f"Purchase successful!\n\nItems:\n{receipt}\n\nTotal Cost: ${total_cost:.2f}\nYour Change: ${change:.2f}"
     )
+
     cart.clear()  # Empty the cart
     money_entry.delete(0, tk.END)
 
