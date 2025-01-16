@@ -99,7 +99,7 @@ def purchase_item():
             "Suggestions",
             f"You might also like:\n" + "\n".join(suggestions)
         )
-    # Clear input fields
+    # Clear inputs
     item_id_entry.delete(0, tk.END)
     quantity_entry.delete(0, tk.END)
 def checkout():
@@ -124,7 +124,7 @@ def checkout():
         "Checkout",
         f"Purchase successful!\n\nItems:\n{receipt}\n\nTotal Cost: ${total_cost:.2f}\nYour Change: ${change:.2f}"
     )
-    cart.clear()  # Empty the cart
+    cart.clear()  # EMPTIES THE CART
     money_entry.delete(0, tk.END)
 
 # GUI SETUP
