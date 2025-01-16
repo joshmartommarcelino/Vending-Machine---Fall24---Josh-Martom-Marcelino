@@ -53,8 +53,17 @@ def filter_inventory(category):
             inventory_text.insert(
                 tk.END, f"{item_id:<5}{item_info['name']:<25}${item_info['price']:<10}{item_info['stock']:<10}\n"
             )
+# SUGGEST ITEMS BASED ON CATEGORY
+def suggest_items(category):
+    # Suggest items from the same category that are in stock
+    suggestions = [
+        item_info["name"] for item_id, item_info in inventory.items()
+        if item_info["category"] == category and item_info["stock"] > 0
+    ]
+    return suggestions[:3]  # Limit to 3 suggestions
 # PURCHASE AND CHECKOUT FUNCTIONS
 cart = []
+
 def purchase_item():
     item_id = item_id_entry.get().strip()
     quantity = quantity_entry.get().strip()
@@ -79,12 +88,20 @@ def purchase_item():
     item['stock'] -= quantity
 
     display_inventory()
+
+    # Display success message
     messagebox.showinfo("Success", f"Added {quantity}x {item['name']} to your cart.")
 
+    # Generate and display suggestions
+    suggestions = suggest_items(item['category'])
+    if suggestions:
+        messagebox.showinfo(
+            "Suggestions",
+            f"You might also like:\n" + "\n".join(suggestions)
+        )
     # Clear input fields
     item_id_entry.delete(0, tk.END)
     quantity_entry.delete(0, tk.END)
-
 def checkout():
     if not cart:
         messagebox.showinfo("Checkout", "Your cart is empty!")
