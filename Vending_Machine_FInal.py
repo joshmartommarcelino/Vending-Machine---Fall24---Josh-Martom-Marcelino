@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 #LOADS INVENTORY FROM DICTIONARY
-def load_inventory():
+def load_inventory(): 
     return {
         '001': {"name": 'Lays Tomato Ketchup', "price": 3.50, "stock": 5, "category": "Snacks"},
         '002': {"name": 'Snickers', "price": 3.00, "stock": 3, "category": "Chocolate"},
@@ -32,7 +32,7 @@ def load_inventory():
         '024': {"name": 'Milk', "price": 3.50, "stock": 5, "category": "Drinks"},
         '025': {"name": 'Boba', "price": 2.50, "stock": 19, "category": "Drinks"},
     }
-#GLOBAL INVENTORY
+#GLOBAL INVENTOR
 inventory = load_inventory()
 #FUNCTIONS FOR GUI 
 def display_inventory():
