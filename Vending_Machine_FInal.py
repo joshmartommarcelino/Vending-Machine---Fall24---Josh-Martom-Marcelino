@@ -8,7 +8,7 @@ def load_inventory():
     return {
         '001': {"name": 'Lays Tomato Ketchup', "price": 3.50, "stock": 5, "category": "Snacks"},
         '002': {"name": 'Snickers', "price": 3.00, "stock": 3, "category": "Chocolate"},
-        '003': {"name": 'M&Ms', "price": 2.50, "stock": 8, "category": "Chocolate"},
+        '003': {"name": 'M&Ms', "price": 2.50, "stock": 8, "category": "Chocolate"},    
         '004': {"name": 'Pepsi', "price": 2.50, "stock": 10, "category": "Drinks"},
         '005': {"name": 'Sprite', "price": 2.50, "stock": 15, "category": "Drinks"},
         '006': {"name": 'Coke', "price": 2.50, "stock": 20, "category": "Drinks"},
